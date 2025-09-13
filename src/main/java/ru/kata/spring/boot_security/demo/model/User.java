@@ -46,7 +46,6 @@ public class User implements UserDetails {
         this.email = email;
     }
 
-    // UserDetails methods
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;

@@ -30,7 +30,6 @@ public class AdminController {
         model.addAttribute("allRoles", userService.getAllRoles());
         model.addAttribute("newUser", new User()); // Для формы создания
 
-        // Добавляем сообщения из параметров URL
         if (success != null) {
             model.addAttribute("successMessage", success);
         }
@@ -48,7 +47,6 @@ public class AdminController {
         return "user-details";
     }
 
-    // Показать форму создания пользователя
     @GetMapping("/create")
     public String showCreateForm(Model model) {
         model.addAttribute("user", new User());
@@ -56,11 +54,9 @@ public class AdminController {
         return "user-create";
     }
 
-    // Обработка создания пользователя с PRG
     @PostMapping("/create")
     public String createUser(@ModelAttribute User user, RedirectAttributes redirectAttributes) {
         try {
-            // Проверка на существующего пользователя
             if (userService.existsByUsername(user.getUsername())) {
                 redirectAttributes.addFlashAttribute("errorMessage",
                         "User with username '" + user.getUsername() + "' already exists");
@@ -81,7 +77,6 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    // Показать форму редактирования пользователя
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model,
                                @RequestParam(value = "success", required = false) String success,
@@ -100,13 +95,11 @@ public class AdminController {
         return "user-update";
     }
 
-    // Обработка обновления пользователя с PRG
     @PostMapping("/update/{id}")
     public String updateUser(@PathVariable Long id,
                              @ModelAttribute User user,
                              RedirectAttributes redirectAttributes) {
         try {
-            // Проверка на уникальность username (исключая текущего пользователя)
             User existingUser = userService.getUserById(id);
             if (!existingUser.getUsername().equals(user.getUsername()) &&
                     userService.existsByUsername(user.getUsername())) {
@@ -115,7 +108,6 @@ public class AdminController {
                 return "redirect:/admin/edit/" + id;
             }
 
-            // Проверка на уникальность email (исключая текущего пользователя)
             if (!existingUser.getEmail().equals(user.getEmail()) &&
                     userService.existsByEmail(user.getEmail())) {
                 redirectAttributes.addFlashAttribute("errorMessage",
@@ -131,7 +123,6 @@ public class AdminController {
         return "redirect:/admin/edit/" + id;
     }
 
-    // Обработка удаления пользователя с PRG
     @PostMapping("/delete/{id}")
     public String deleteUser(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
@@ -143,7 +134,6 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    // Быстрое создание пользователя из админ-панели (без отдельной формы)
     @PostMapping("/quick-create")
     public String quickCreateUser(@ModelAttribute User user, RedirectAttributes redirectAttributes) {
         try {

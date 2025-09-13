@@ -22,9 +22,9 @@
         <div class="col-lg-8">
             <!-- Header -->
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1><i class="bi bi-person-plus"></i> Create New User</h1>
+                <h1><i class="bi bi-person-plus"></i> Создание пользователя</h1>
                 <a th:href="@{/admin}" class="btn btn-outline-secondary">
-                    <i class="bi bi-arrow-left"></i> Back to Users
+                    <i class="bi bi-arrow-left"></i> Вернуться
                 </a>
             </div>
 
@@ -38,13 +38,13 @@
             <!-- Create Form -->
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0">Create New User</h5>
+                    <h5 class="mb-0">Создание пользователя</h5>
                 </div>
                 <div class="card-body">
                     <form th:action="@{/admin/create}" th:object="${user}" method="post">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label">Username *</label>
+                                <label class="form-label">Имя пользователя *</label>
                                 <input type="text" th:field="*{username}" class="form-control" required>
                             </div>
                             <div class="col-md-6">
@@ -52,26 +52,26 @@
                                 <input type="email" th:field="*{email}" class="form-control" required>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Password *</label>
+                                <label class="form-label">Пароль *</label>
                                 <input type="password" th:field="*{password}" class="form-control" required>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Roles *</label>
+                                <label class="form-label">Роли *</label>
                                 <select th:field="*{roles}" class="form-select" multiple size="4" required>
                                     <option th:each="role : ${allRoles}"
                                             th:value="${role.id}"
                                             th:text="${role.name.replace('ROLE_', '')}">
                                     </option>
                                 </select>
-                                <div class="form-text">Hold Ctrl to select multiple roles</div>
+                                <div class="form-text">Удерживайте CTRL для выбора нескольких вариантов</div>
                             </div>
                             <div class="col-12">
                                 <div class="d-flex gap-2">
                                     <button type="submit" class="btn btn-gradient">
-                                        <i class="bi bi-person-plus"></i> Create User
+                                        <i class="bi bi-person-plus"></i> Создать
                                     </button>
                                     <a th:href="@{/admin}" class="btn btn-outline-secondary">
-                                        <i class="bi bi-x-circle"></i> Cancel
+                                        <i class="bi bi-x-circle"></i> Отмена
                                     </a>
                                 </div>
                             </div>

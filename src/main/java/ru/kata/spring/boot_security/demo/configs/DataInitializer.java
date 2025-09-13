@@ -24,14 +24,13 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Создаем роли, если их нет
+
         Role adminRole = roleRepository.findByName("ROLE_ADMIN")
                 .orElseGet(() -> roleRepository.save(new Role("ROLE_ADMIN")));
 
         Role userRole = roleRepository.findByName("ROLE_USER")
                 .orElseGet(() -> roleRepository.save(new Role("ROLE_USER")));
 
-        // Создаем администратора, если его нет
         if (userRepository.findByUsername("admin").isEmpty()) {
             User admin = new User();
             admin.setUsername("admin");
@@ -41,7 +40,6 @@ public class DataInitializer implements CommandLineRunner {
             userRepository.save(admin);
         }
 
-        // Создаем обычного пользователя, если его нет
         if (userRepository.findByUsername("user").isEmpty()) {
             User user = new User();
             user.setUsername("user");
