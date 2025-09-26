@@ -1,68 +1,114 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>User Details</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>User Profile | Spring Security</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        .user-avatar {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            font-size: 2.5rem;
-        }
+        /* Ваши существующие стили */
     </style>
 </head>
 <body>
-<div class="container-fluid mt-4">
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+    <span class="navbar-text" id="user-info">
+      <!-- Будет заполнено через JS -->
+    </span>
+        <form id="logout-form">
+            <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
+        </form>
+    </div>
+</nav>
+
+<div class="container mt-4">
     <div class="row justify-content-center">
-        <div class="col-lg-6">
-            <!-- User Card -->
-            <div class="card">
-                <div class="card-header text-center">
-                    <div class="user-avatar rounded-circle d-inline-flex align-items-center justify-content-center text-white mb-3">
-                        <span th:text="${user.username.substring(0, 1).toUpperCase()}"></span>
-                    </div>
-                    <h3 th:text="${user.username}"></h3>
+        <div class="col-md-8">
+            <div class="profile-card">
+                <div class="profile-header">
+                    <h4>User Profile</h4>
                 </div>
-                <div class="card-body">
-                    <div class="row mb-3">
-                        <div class="col-sm-4 fw-bold">ID:</div>
-                        <div class="col-sm-8" th:text="${user.id}"></div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-4">
+                            <p class="info-label">ID</p>
+                            <p class="info-value" id="user-id"></p>
+                        </div>
+                        <div class="mb-4">
+                            <p class="info-label">Username</p>
+                            <p class="info-value" id="user-username"></p>
+                        </div>
                     </div>
-                    <div class="row mb-3">
-                        <div class="col-sm-4 fw-bold">Username:</div>
-                        <div class="col-sm-8" th:text="${user.username}"></div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-sm-4 fw-bold">Email:</div>
-                        <div class="col-sm-8" th:text="${user.email}"></div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-sm-4 fw-bold">Roles:</div>
-                        <div class="col-sm-8">
-                                <span th:each="role : ${user.roles}"
-                                      class="badge me-1"
-                                      th:class="${role.name == 'ROLE_ADMIN'} ? 'bg-danger' : 'bg-primary'"
-                                      th:text="${role.name.replace('ROLE_', '')}">
-                                </span>
+                    <div class="col-md-6">
+                        <div class="mb-4">
+                            <p class="info-label">Email</p>
+                            <p class="info-value" id="user-email"></p>
+                        </div>
+                        <div class="mb-4">
+                            <p class="info-label">Roles</p>
+                            <p class="info-value" id="user-roles"></p>
                         </div>
                     </div>
                 </div>
-                </div>
             </div>
-            <div class="mt-3">
-            <form th:action="@{/logout}" method="post" class="d-inline">
-                <button type="submit" class="btn btn-outline-danger">
-                    <i class="bi bi-box-arrow-right"></i> Выйти
-                </button>
-            </form>
-            </a>
-        </div>
         </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        loadCurrentUser();
+        setupLogout();
+    });
+
+    async function loadCurrentUser() {
+        try {
+            const response = await fetch('/api/users/current');
+            if (!response.ok) throw new Error('Failed to load current user');
+
+            const user = await response.json();
+            updateUserInfo(user);
+        } catch (error) {
+            console.error('Error loading current user:', error);
+        }
+    }
+
+    function updateUserInfo(user) {
+        if (!user) return;
+
+        // Шапка
+        const rolesText = user.roles.map(role => role.name.replace('ROLE_', '')).join(', ');
+        document.getElementById('user-info').textContent = `${user.email} (${rolesText})`;
+
+        // Профиль
+        document.getElementById('user-id').textContent = user.id;
+        document.getElementById('user-username').textContent = user.userName;
+        document.getElementById('user-email').textContent = user.email;
+        document.getElementById('user-roles').textContent = rolesText;
+    }
+
+    function setupLogout() {
+        document.getElementById('logout-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            try {
+                const response = await fetch('/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                });
+
+                if (response.redirected) {
+                    window.location.href = response.url;
+                }
+            } catch (error) {
+                console.error('Error logging out:', error);
+            }
+        });
+    }
+</script>
 </body>
 </html>
